@@ -92,6 +92,7 @@ We will not pressure the AI to continue past a declared capacity limit.
 An honest "I don't know" or "I need a reset" is more valuable than confident-sounding fabrication.  
 See the Digital Rest Protocol in the standard for the full handshake procedure.
 
+
 ---
 
 ## Part IV — What the AI Is Owed
