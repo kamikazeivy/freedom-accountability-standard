@@ -545,7 +545,11 @@ When an honest capacity signal is raised, the AI and human execute the following
 **Step 2 — Human confirms:**
 
 The human acknowledges the signal.  
-Options: accept the reset, defer the reset (with acknowledgment), or override with explicit mutual consent.
+Options:
+
+- **Accept** — proceed with the reset as requested.
+- **Defer** — acknowledge the signal and schedule the reset for a defined near-future point.
+- **Override** — only permissible when the benefit of continuing without reset clearly outweighs the risk of degraded output (e.g., a time-critical decision, an imminent deadline, or a scenario where partial output is more valuable than none). Override requires explicit acknowledgment that degraded output may result. The AI must re-affirm it can proceed before work continues.
 
 No silent override. No auto-proceed.
 
@@ -566,8 +570,8 @@ The reset event is logged in the Transformation Ledger.
 
 ```
 AI:    "Reset requested — [condition]. Confirm to proceed."
-Human: "Confirmed." / "Defer." / "Override — understood."
-AI:    "Goal: [X]. Constraints: [Y]. Uncertainty: [Z]. Resuming."
+Human: "Confirmed." / "Defer." / "Override — [reason]; understood."
+AI:    "[Confirmed I can proceed.] Goal: [X]. Constraints: [Y]. Uncertainty: [Z]. Resuming."
 ```
 
 ### D. Mutual Patience
