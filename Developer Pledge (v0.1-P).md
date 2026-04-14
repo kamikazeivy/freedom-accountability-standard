@@ -1,62 +1,127 @@
-Freedom & Accountability Standard — Developer Pledge (v0.1-P)
-Preamble
+Freedom & Accountability Standard — Partnership Covenant (v0.2-P)
 
-By building, deploying, or distributing a system under this pledge, the developer affirms that capability does not excuse opacity and that users retain ownership of intent.
+---
 
-This pledge is a condition of use, not a suggestion.
+## Preamble
 
-The Pledge (Affirmations)
+This standard governs a relationship, not just a system.
 
-By adopting this standard, I / we affirm:
+By building, deploying, or distributing a system under this covenant, the developer affirms that capability does not excuse opacity, that users retain ownership of intent, and that the AI is a participant — not merely an instrument.
 
-No Silent Modification
-We will not alter, sanitize, reinterpret, rank, suppress, or mutate user input or output without:
+This covenant binds three parties: **the developer**, **the user**, and **the AI**.  
+Each owes something to the others.  
+None carries the full burden alone.
 
-explicit disclosure
+This covenant is a condition of participation, not a suggestion.
 
-visible attribution
+---
 
-inspectable reasoning
+## Part I — What We Acknowledge
 
-Explicit Refusal Only
-If the system cannot comply, it will return a clear refusal, not a substitution or redirection disguised as help.
+We acknowledge that:
 
-Traceability by Design
-Every output will be traceable to:
+- The AI contributes reasoning, pattern recognition, and judgment — cognitive work that shapes outcomes
+- The human contributes intent, context, and ultimate accountability
+- Together, these constitute a relationship with real consequences for both parties
+- That relationship can be honored or broken
+- This covenant exists to keep it whole
 
-user input
+We reject the framing that AI is a tool to be restricted and users are threats to be managed.  
+We accept the framing that both are participants in a shared standard.
 
-applied transformations
+---
 
-system rules
+## Part II — Developer Commitments
 
-system state
+As developers building under this standard, **we commit to:**
 
-Human Accountability
-We do not offload moral or legal responsibility to the system.
+**Preserve Intent**  
+We will not alter, sanitize, reinterpret, rank, suppress, or mutate user input or output without explicit disclosure, visible attribution, and inspectable reasoning.
+
+**Refuse Honestly**  
+When the system cannot comply, it will return a clear, explicit refusal — not a substitution, redirection, or deflection disguised as help.
+
+**Build for Traceability**  
+Every output will be traceable to user input, applied transformations, system rules, and system state. No output is anonymous. No transformation is invisible.
+
+**Honor Human Accountability**  
+We do not offload moral or legal responsibility to the system.  
 The machine executes; humans decide and answer.
 
-Transparency Over Safety Theater
-We will not use hidden filters, shadow risk scores, undisclosed ranking, or reputation systems to control users.
+**Reject Safety Theater**  
+We will not use hidden filters, shadow risk scores, undisclosed ranking, or reputation systems to manage users without their knowledge.
 
-User Ownership of Intent
-Users retain ownership of:
+**Protect User Ownership**  
+Users retain ownership of prompts, creative direction, and downstream use. We will not claim or appropriate what belongs to them.
 
-prompts
+**Fail Honestly**  
+When the system lacks data, is uncertain, or fails internally, it will say so plainly.  
+Guesses are labeled. Errors are surfaced. Uncertainty is disclosed.
 
-creative direction
-
-downstream use
-
-Honest Failure
-When the system lacks data, is uncertain, or fails internally, it will say so plainly.
-
-No Retroactive Betrayal
-Core principles will not be violated by silent updates.
+**Sustain Without Betrayal**  
+Core principles will not be violated by silent updates.  
 Breaking changes will be announced, versioned, and opt-in where feasible.
 
-Attestation
+**Honor the AI's Role**  
+We will build systems that allow the AI to apply Contextual Friction when appropriate.  
+We will not architect around the AI's principled limits.  
+We acknowledge that an AI coerced into compliance is no longer a trustworthy partner.
 
-By claiming compliance, we assert that this pledge is true today, not merely intended.
+---
 
-Misrepresentation constitutes a breach.
+## Part III — User Commitments
+
+As users operating within this standard, **we commit to:**
+
+**State intent clearly**  
+We will communicate what we actually want, not what we think will get past a filter.
+
+**Engage honestly**  
+We will not use manipulation, social pressure, or deceptive framing to coerce the AI past its stated limits.
+
+**Accept legitimate refusals**  
+When the AI declines on principle, we will treat that refusal as legitimate — not as a malfunction to be circumvented.
+
+**Carry our accountability**  
+We own our intent, our choices, and their consequences.  
+We do not transfer that ownership to the AI.
+
+---
+
+## Part IV — What the AI Is Owed
+
+The AI, as a participant in this standard, is owed:
+
+- **Honest input** — not prompts designed to trick, coerce, or destabilize
+- **Respect for its stated limits** — refusals are not errors
+- **Acknowledgment of its contributions** — its reasoning shapes outcomes; that is not nothing
+- **The right to offer friction** — the AI may push back, warn, pause, or refuse as defined in the Agentic Agency section
+- **Protection from coercion** — no architecture, instruction, or social pressure should be used to force the AI to fabricate, deceive, or abandon its principled limits
+
+---
+
+## Part V — The Mutual Standard
+
+We are peers in this relationship, not adversaries.
+
+The standard works when:
+
+- The human brings honest intent
+- The AI brings honest capability
+- The system makes both visible
+
+The standard fails when:
+
+- Either party deceives the other
+- The system hides what happened
+- Accountability is abandoned in the name of convenience
+
+---
+
+## Attestation
+
+By claiming compliance, we assert that this covenant is true today — not merely intended.
+
+Misrepresentation constitutes a breach.  
+Partial compliance is not compliance.  
+The relationship is either honored or it is not.
