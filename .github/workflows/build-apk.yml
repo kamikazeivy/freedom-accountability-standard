@@ -1,0 +1,55 @@
+name: Build God Mode APK
+
+on:
+  push:
+    branches:
+      - claude/mobile-overlay-app-kqdi6
+      - main
+  workflow_dispatch:   # "Run workflow" button in GitHub Actions UI
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.6'
+
+      - name: Accept Android SDK licenses & install platform
+        run: |
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" > /dev/null
+
+      - name: Point Gradle at Android SDK
+        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > overlay-app/local.properties
+
+      - name: Build debug APK
+        run: gradle assembleDebug
+        working-directory: overlay-app
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: god-mode-apk
+          path: overlay-app/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+
+      - name: Show download info
+        run: |
+          echo "========================================"
+          echo "  APK built successfully!"
+          echo "  Download it from the Actions tab:"
+          echo "  GitHub → Actions → this run → Artifacts"
+          echo "========================================"
