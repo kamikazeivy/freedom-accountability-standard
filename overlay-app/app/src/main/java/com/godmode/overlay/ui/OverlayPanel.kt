@@ -38,19 +38,15 @@ fun OverlayPanel(
             .background(BG)
     ) {
         Column {
-            // Header bar
             PanelHeader(onClose = onClose, onStop = onStop)
-
-            // Tab row
             TabRow(state)
-
-            // Tab content
             Box(modifier = Modifier.weight(1f)) {
                 when (state.currentTab.value) {
-                    Tab.BROWSER -> BrowserTab(state)
-                    Tab.SCRAPER -> ScraperTab(state)
-                    Tab.CLIPBOARD -> ClipboardTab(state)
-                    Tab.TOGGLES -> TogglesTab(state, clipboardMonitor)
+                    Tab.BROWSER    -> BrowserTab(state)
+                    Tab.SCRAPER    -> ScraperTab(state)
+                    Tab.INSPECTOR  -> InspectorTab(state)
+                    Tab.CLIPBOARD  -> ClipboardTab(state)
+                    Tab.TOGGLES    -> TogglesTab(state, clipboardMonitor)
                 }
             }
         }
@@ -87,10 +83,11 @@ private fun PanelHeader(onClose: () -> Unit, onStop: () -> Unit) {
 private fun TabRow(state: OverlayState) {
     data class TabDef(val tab: Tab, val icon: ImageVector, val label: String)
     val tabs = listOf(
-        TabDef(Tab.BROWSER, Icons.Filled.Language, "Browser"),
-        TabDef(Tab.SCRAPER, Icons.Filled.DataObject, "Scraper"),
-        TabDef(Tab.CLIPBOARD, Icons.Filled.ContentPaste, "Clipboard"),
-        TabDef(Tab.TOGGLES, Icons.Filled.Tune, "Toggles")
+        TabDef(Tab.BROWSER,   Icons.Filled.Language,      "Browser"),
+        TabDef(Tab.SCRAPER,   Icons.Filled.DataObject,    "Scraper"),
+        TabDef(Tab.INSPECTOR, Icons.Filled.BugReport,     "Network"),
+        TabDef(Tab.CLIPBOARD, Icons.Filled.ContentPaste,  "Clipboard"),
+        TabDef(Tab.TOGGLES,   Icons.Filled.Tune,          "Toggles")
     )
     Row(
         modifier = Modifier
@@ -106,17 +103,16 @@ private fun TabRow(state: OverlayState) {
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
                     .clickableIf(true) { state.currentTab.value = def.tab }
-                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                    .padding(horizontal = 6.dp, vertical = 6.dp)
             ) {
                 Icon(
-                    def.icon,
-                    def.label,
+                    def.icon, def.label,
                     tint = if (selected) ACCENT else Color(0xFF888888),
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(19.dp)
                 )
                 Text(
                     def.label,
-                    fontSize = 9.sp,
+                    fontSize = 8.sp,
                     color = if (selected) ACCENT else Color(0xFF666666)
                 )
             }
@@ -124,6 +120,5 @@ private fun TabRow(state: OverlayState) {
     }
 }
 
-// Extension to avoid androidx.compose.foundation.clickable import collision
 fun Modifier.clickableIf(enabled: Boolean, onClick: () -> Unit): Modifier =
     if (enabled) this.then(androidx.compose.foundation.clickable(onClick = onClick)) else this

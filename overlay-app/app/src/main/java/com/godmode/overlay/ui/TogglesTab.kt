@@ -72,6 +72,16 @@ fun TogglesTab(state: OverlayState, clipboardMonitor: ClipboardMonitor) {
             )
         }
 
+        item {
+            ToggleRow(
+                icon = Icons.Filled.NetworkCheck,
+                title = "Network Interceptor",
+                subtitle = "Hook fetch/XHR in browser — log all API responses to Inspector tab",
+                checked = state.networkInterceptEnabled.value,
+                onToggle = { state.networkInterceptEnabled.value = it }
+            )
+        }
+
         item { SectionLabel("TOOLS") }
         item {
             ToggleRow(

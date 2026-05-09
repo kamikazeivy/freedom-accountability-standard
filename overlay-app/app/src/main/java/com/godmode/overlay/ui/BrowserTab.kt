@@ -18,6 +18,10 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import com.godmode.overlay.util.NetworkEntry
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import org.json.JSONArray
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -113,6 +117,49 @@ fun BrowserTab(state: OverlayState) {
             )
         }
 
+        // Poll network interceptor log every 2 seconds
+        LaunchedEffect(Unit) {
+            while (isActive) {
+                delay(2000)
+                webView?.evaluateJavascript(
+                    "(function(){ var l=window.__gm_log||[]; window.__gm_log=[]; return JSON.stringify(l); })()"
+                ) { raw ->
+                    if (raw != null && raw != "null" && raw != "\"null\"") {
+                        runCatching {
+                            val arr = JSONArray(raw.trim('"').replace("\\\"", "\"").replace("\\n", ""))
+                            // raw comes back as a JSON string; need to re-parse
+                        }
+                        runCatching {
+                            // evaluateJavascript returns the value as a JSON-encoded string
+                            val cleaned = if (raw.startsWith("\"")) {
+                                org.json.JSONArray(
+                                    raw.substring(1, raw.length - 1)
+                                        .replace("\\\"", "\"")
+                                        .replace("\\\\", "\\")
+                                )
+                            } else {
+                                org.json.JSONArray(raw)
+                            }
+                            for (i in 0 until cleaned.length()) {
+                                val obj = cleaned.getJSONObject(i)
+                                state.networkLogs.add(
+                                    0, NetworkEntry(
+                                        url = obj.optString("url"),
+                                        type = obj.optString("type"),
+                                        status = obj.optInt("status"),
+                                        body = obj.optString("body")
+                                    )
+                                )
+                            }
+                            if (state.networkLogs.size > 200) {
+                                repeat(state.networkLogs.size - 200) { state.networkLogs.removeLast() }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // WebView
         AndroidView(
             factory = { context ->
@@ -145,12 +192,10 @@ fun BrowserTab(state: OverlayState) {
                         override fun onPageFinished(view: WebView?, url: String?) {
                             isLoading = false
                             state.browserUrl.value = url ?: state.browserUrl.value
-                            // Inject dark mode CSS if enabled
                             if (state.darkWebViewEnabled.value) injectDarkMode(view)
-                            // Inject ad blocker if enabled
                             if (state.adBlockEnabled.value) injectAdBlock(view)
-                            // Reader mode
                             if (state.readerModeEnabled.value) injectReaderMode(view)
+                            if (state.networkInterceptEnabled.value) injectNetworkInterceptor(view)
                         }
                         override fun shouldOverrideUrlLoading(
                             view: WebView?,
@@ -214,6 +259,47 @@ private fun injectAdBlock(view: WebView?) {
             s.textContent='$css';
         })();""", null
     )
+}
+
+private fun injectNetworkInterceptor(view: WebView?) {
+    val js = """
+    (function(){
+      if(window.__gm_hooked) return;
+      window.__gm_hooked = true;
+      window.__gm_log = window.__gm_log || [];
+
+      var _fetch = window.fetch;
+      window.fetch = async function() {
+        var args = arguments;
+        try {
+          var resp = await _fetch.apply(this, args);
+          var clone = resp.clone();
+          var text = '';
+          try { text = await clone.text(); } catch(e){}
+          window.__gm_log.push({type:'fetch',url:String(args[0]),status:resp.status,body:text.substring(0,8000)});
+          return resp;
+        } catch(e) {
+          window.__gm_log.push({type:'fetch',url:String(args[0]),status:0,body:'ERROR: '+e.message});
+          throw e;
+        }
+      };
+
+      var _open = XMLHttpRequest.prototype.open;
+      var _send = XMLHttpRequest.prototype.send;
+      XMLHttpRequest.prototype.open = function(m,u){
+        this.__gm_url = u;
+        return _open.apply(this, arguments);
+      };
+      XMLHttpRequest.prototype.send = function(){
+        var xhr = this;
+        this.addEventListener('loadend', function(){
+          window.__gm_log.push({type:'xhr',url:String(xhr.__gm_url||''),status:xhr.status,body:(xhr.responseText||'').substring(0,8000)});
+        });
+        return _send.apply(this, arguments);
+      };
+    })();
+    """.trimIndent()
+    view?.evaluateJavascript(js, null)
 }
 
 private fun injectReaderMode(view: WebView?) {

@@ -10,6 +10,14 @@ data class ScrapedItem(
     val images: List<String>
 )
 
+data class NetworkEntry(
+    val url: String,
+    val type: String,   // "fetch" or "xhr"
+    val status: Int,
+    val body: String,
+    val time: Long = System.currentTimeMillis()
+)
+
 class OverlayState {
     val isPanelOpen = mutableStateOf(false)
     val currentTab = mutableStateOf(Tab.BROWSER)
@@ -22,9 +30,11 @@ class OverlayState {
     val jsEnabled = mutableStateOf(true)
     val darkWebViewEnabled = mutableStateOf(true)
     val adBlockEnabled = mutableStateOf(true)
+    val networkInterceptEnabled = mutableStateOf(true)
 
     val scrapedItems = mutableStateListOf<ScrapedItem>()
     val clipboardHistory = mutableStateListOf<String>()
+    val networkLogs = mutableStateListOf<NetworkEntry>()
 }
 
-enum class Tab { BROWSER, SCRAPER, CLIPBOARD, TOGGLES }
+enum class Tab { BROWSER, SCRAPER, INSPECTOR, CLIPBOARD, TOGGLES }

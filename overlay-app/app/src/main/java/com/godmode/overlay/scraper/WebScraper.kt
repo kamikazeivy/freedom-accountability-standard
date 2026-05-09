@@ -107,4 +107,55 @@ class WebScraper {
             result
         }
     }
+
+    // Parse raw HTML string (offline — no network call)
+    suspend fun extractFromHtml(html: String): Map<String, List<String>> = withContext(Dispatchers.Default) {
+        val doc = Jsoup.parse(html)
+        doc.select("script[src], style, link[rel=stylesheet]").remove()
+
+        val result = mutableMapOf<String, List<String>>()
+
+        result["prices"] = doc.select(
+            "[class*='price'],[class*='Price'],[data-price],[itemprop='price']," +
+            "[class*='cost'],[class*='amount'],[class*='offer'],[class*='deal']"
+        ).map { it.text().trim() }.filter { it.isNotBlank() }.distinct()
+
+        result["offers"] = doc.select(
+            "[class*='promo'],[class*='deal'],[class*='offer'],[class*='discount']," +
+            "[class*='coupon'],[class*='sale'],[class*='badge'],[class*='reward']," +
+            "[class*='incentive'],[class*='bonus']"
+        ).map { it.text().trim() }.filter { it.isNotBlank() }.distinct()
+
+        // Pull inline JSON blobs out of <script> tags — often contains full API responses
+        result["json_blobs"] = doc.select("script:not([src])").mapNotNull { el ->
+            val txt = el.data().trim()
+            // Look for JSON objects/arrays embedded in JS variables or window.__INITIAL_STATE__ etc.
+            val jsonRegex = Regex("""(?:=\s*|:\s*)(\{[\s\S]{50,}?\}|\[[\s\S]{20,}?\])""")
+            jsonRegex.findAll(txt).mapNotNull { match ->
+                val candidate = match.groupValues[1]
+                runCatching {
+                    if (candidate.startsWith("{")) org.json.JSONObject(candidate).toString(2)
+                    else org.json.JSONArray(candidate).toString(2)
+                }.getOrNull()
+            }.firstOrNull()
+        }.distinct().take(20)
+
+        result["tables"] = doc.select("table").map { table ->
+            table.select("tr").joinToString("\n") { row ->
+                row.select("td,th").joinToString(" | ") { it.text().trim() }
+            }
+        }.filter { it.isNotBlank() }
+
+        result["data_attributes"] = doc.select("[data-*]")
+            .flatMap { el ->
+                el.attributes()
+                    .filter { attr -> attr.key.startsWith("data-") && attr.value.isNotBlank() }
+                    .map { "${it.key}=${it.value}" }
+            }
+            .filter { it.length < 300 }
+            .distinct()
+            .take(100)
+
+        result
+    }
 }
